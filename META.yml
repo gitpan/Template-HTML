@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Template-HTML
-version:             0.01
+version:             0.02
 abstract:            Automatic HTML encoding of tags for Template Toolkit
 license:             perl
 author:              
