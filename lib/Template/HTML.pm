@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base qw(Template);
 
-our $VERSION = '0.02';
+our $VERSION = '0.04';
 
 use Template::HTML::Stash;
 use Template::HTML::Context;

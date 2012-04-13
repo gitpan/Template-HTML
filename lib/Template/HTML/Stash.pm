@@ -11,7 +11,7 @@ sub get {
 
     my $value = $self->SUPER::get(@_);
 
-    $value = Template::HTML::Variable->new($value);
+    $value = Template::HTML::Variable->new($value) unless ref $value;
 
     return $value;
 }

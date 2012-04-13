@@ -3,12 +3,40 @@ package Template::HTML::Variable;
 use strict;
 use warnings;
 
+sub op_factory {
+    my ($op) = @_;
+
+    return eval q|sub {
+        my ($self, $str) = @_;
+
+        if ( ref $str eq __PACKAGE__) {
+            return $self->{value} | . $op . q| $str->{value};
+        }
+        else {
+            return $self->{value} | . $op . q| $str;
+        }
+    }|;
+}
+
 use overload
-    '""' => \&html_encoded,
-    '.'  => \&concat,
-    '.=' => \&concatequals,
-    '='  => \&clone
-    ;
+    '""'   => \&html_encoded,
+    '.'    => \&concat,
+    '.='   => \&concatequals,
+    '='    => \&clone,
+
+    'cmp' => op_factory('cmp'),
+    'eq'  => op_factory('eq'),
+    '<=>' => op_factory('<=>'),
+    '=='  => op_factory('=='),
+    '%'   => op_factory('%'),
+    '+'   => op_factory('+'),
+    '-'   => op_factory('-'),
+    '*'   => op_factory('*'),
+    '/'   => op_factory('/'),
+    '**'  => op_factory('**'),
+    '>>'  => op_factory('>>'),
+    '<<'  => op_factory('<<'),
+;
 
 sub new {
     my ($class, $value) = @_;
@@ -135,6 +163,10 @@ Implementation of overloaded .= operator
 
 Returns a clone of this variable. (used for the implementation of the
 overloaded = operator).
+
+=head2 op_factory()
+
+Factory for generating operator overloading subs
 
 =head1 AUTHOR
 

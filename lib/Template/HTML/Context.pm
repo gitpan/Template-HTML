@@ -2,7 +2,6 @@ package Template::HTML::Context;
 
 use strict;
 use warnings;
-use Scalar::Util qw(blessed);
 use base qw(Template::Context);
 
 sub filter {
@@ -12,7 +11,7 @@ sub filter {
     if ( $name eq 'none' ) {
         return sub {
             my $value = shift;
-            return $value->plain if blessed($value) and $value->isa('Template::HTML::Variable');
+            return $value->plain if UNIVERSAL::isa($value, 'Template::HTML::Variable');
             return $value;
         };
     }
@@ -22,7 +21,7 @@ sub filter {
     return sub {
         my $value = shift;
 
-        if ( ref $value eq 'Template::HTML::Variable' ) {
+        if ( UNIVERSAL::isa($value, 'Template::HTML::Variable') ) {
             return ref($value)->new($filter->($value->plain));
         }
 

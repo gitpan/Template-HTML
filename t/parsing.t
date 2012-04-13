@@ -22,20 +22,25 @@ BAIL_OUT "Couldn't create Template::HTML instance" unless ref $template eq 'Temp
 my $vars = { test => "< Test & stuff >" };
 
 my %tests = (
-    'test'                => '&lt; Test &amp; stuff &gt;',
-    'test.remove(">")'    => '&lt; Test &amp; stuff ',
-    'test | upper'        => '&lt; TEST &amp; STUFF &gt;',
-    'test | truncate(12)' => '&lt; Test &amp; ...',
-    'test | html'         => '&amp;lt; Test &amp;amp; stuff &amp;gt;',
-    'test | none'         => $vars->{test},
-    'test | none | upper' => uc $vars->{test},
-    'test | upper | none' => uc $vars->{test},
+    'test'                           => '&lt; Test &amp; stuff &gt;',
+    'test.remove(">")'               => '&lt; Test &amp; stuff ',
+    'test | upper'                   => '&lt; TEST &amp; STUFF &gt;',
+    'test | truncate(12)'            => '&lt; Test &amp; ...',
+    'test | html'                    => '&amp;lt; Test &amp;amp; stuff &amp;gt;',
+    'test | none'                    => $vars->{test},
+    'test | none | upper'            => uc $vars->{test},
+    'test | upper | none'            => uc $vars->{test},
+    'test == "hello" ? "yes" : "no"' => 'no',
+    'test | replace("&","and")'      => '&lt; Test and stuff &gt;',
 );
 
 while ( my ($in, $expected) = each %tests ) {
     my $out = '';
     $in = "[% $in %]";
-    $template->process(\$in, $vars, \$out);
+    my $success = $template->process(\$in, $vars, \$out);
+    unless ( $success ) {
+        diag('Template Toolkit error: ' . $template->error);
+    }
     is($out, $expected, $in);
 }
 
